@@ -1,0 +1,11 @@
+version: '3.5'
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27018:27017
+    environment:
+      MONGODB_DATABASE: gimnasio
+    volumes:
+      - ./mongo:/data/db
