@@ -1,26 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { handleErrors } from 'src/common/utils';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Category } from './entities/category.entity';
 
 @Injectable()
 export class CategoryService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+
+  constructor(
+    @InjectModel(Category.name)
+    private readonly categoryModel:Model<Category> 
+  ){}
+
+  async create(createCategoryDto: CreateCategoryDto) {
+    try {
+      const item = new this.categoryModel(createCategoryDto);
+      return item.save()
+    } catch (error) {
+      handleErrors(error)
+    }
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async findAll() {
+    try {
+      return await this.categoryModel.find();
+    } catch (error)   {
+      handleErrors(error)
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: string) {
+    const item =await this.categoryModel.findById(id);
+    if (!item)
+      throw new NotFoundException(`Item with id ${id}, not found`)
+    return item
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    this.findOne(id);
+    try {
+      return  await this.categoryModel.findByIdAndUpdate({_id:id}, updateCategoryDto)
+    } catch (error) {
+      handleErrors(error)
+    }   
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: string) {
+    
+    try {
+      const item=await this.findOne(id);
+      item.deleted = true;
+      item.save();
+      return `Item with id ${id} deleted successflly`
+    } catch (error) {
+      handleErrors(error)
+    }   
   }
 }

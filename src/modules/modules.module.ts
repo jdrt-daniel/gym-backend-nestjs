@@ -11,6 +11,9 @@ import { ProductsModule } from './products/products.module';
 import { OffersModule } from './offers/offers.module';
 import { VendorsModule } from './vendors/vendors.module';
 import { CategoryModule } from './category/category.module';
+import { DisciplinesModule } from './disciplines/disciplines.module';
+import { SubscribesModule } from './subscribes/subscribes.module';
+import { PhonesModule } from './phones/phones.module';
 
 @Module({
   imports: [
@@ -25,6 +28,9 @@ import { CategoryModule } from './category/category.module';
     OffersModule,
     VendorsModule,
     CategoryModule,
+    DisciplinesModule,
+    SubscribesModule,
+    PhonesModule,
   ],
   exports: [
     ClientsModule,
